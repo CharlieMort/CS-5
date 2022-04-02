@@ -17,8 +17,6 @@ if (!(!process.env.NODE_ENV || process.env.NODE_ENV === "development")) {
     });
 }
 
-const router = require("express").Router();
-
 function OpenDatabase() {
     return new sqlite3.Database("./Spy.db");
 }
@@ -198,8 +196,6 @@ app.route("/api/agent/name").get((req, res) => {
     db.close();
 })
 
-const PORT = process.env.PORT | 5000;
-
-
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => console.log(`Server Listening On Port ${PORT}`))
