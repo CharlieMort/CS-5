@@ -73,7 +73,7 @@ app.route("/api/mission/locations").get((req, res) => {
 
 app.route("/api/mission/agent").get((req, res) => {
     let db = OpenDatabase();
-    let stmt = `SELECT Mission.AgentID, Mission.Location, Mission.Outcome, Mission.Date FROM Mission JOIN Agent ON Agent.id = Mission.AgentID WHERE Agent.Realname = "${req.body.name}";`;
+    let stmt = `SELECT Mission.AgentID, Mission.Location, Mission.Outcome, Mission.Date FROM Mission JOIN Agent ON Agent.id = Mission.AgentID WHERE Agent.Realname = "${req.query.name}";`;
     db.all(stmt, (err, rows) => {
         if (err) {
             console.error(err);
@@ -89,7 +89,7 @@ app.route("/api/mission/agent").get((req, res) => {
 
 app.route("/api/agent/withID").get((req, res) => {
     let db = OpenDatabase();
-    let stmt = `SELECT Realname FROM Agent WHERE id LIKE "${req.body.id}%";`;
+    let stmt = `SELECT * FROM Agent WHERE id LIKE "${req.query.id}%";`;
     db.all(stmt, (err, rows) => {
         if (err) {
             console.error(err);
@@ -105,7 +105,7 @@ app.route("/api/agent/withID").get((req, res) => {
 
 app.route("/api/agent/deployed").get((req, res) => {
     let db = OpenDatabase();
-    let stmt = `SELECT Agent.id, Agent.Realname, Agent.Codename FROM Agent JOIN Mission ON Agent.id = Mission.AgentID WHERE Mission.Location = "${req.body.location}";`;
+    let stmt = `SELECT Agent.id, Agent.Realname, Agent.Codename FROM Agent JOIN Mission ON Agent.id = Mission.AgentID WHERE Mission.Location = "${req.query.location}";`;
     db.all(stmt, (err, rows) => {
         if (err) {
             console.error(err);
@@ -119,9 +119,9 @@ app.route("/api/agent/deployed").get((req, res) => {
     db.close();
 })
 
-app.route("/api/agentj/deployed/team").get((req, res) => {
+app.route("/api/agent/deployed/team").get((req, res) => {
     let db = OpenDatabase();
-    let stmt = `SELECT Mission.Location FROM Mission JOIN Agent ON Agent.id = Mission.AgentID WHERE Agent.Codename LIKE "%${req.body.team}";`;
+    let stmt = `SELECT Mission.Location FROM Mission JOIN Agent ON Agent.id = Mission.AgentID WHERE Agent.Codename LIKE "%${req.query.team}";`;
     db.all(stmt, (err, rows) => {
         if (err) {
             console.error(err);
@@ -137,7 +137,7 @@ app.route("/api/agentj/deployed/team").get((req, res) => {
 
 app.route("/api/agent/withCodename").get((req, res) => {
     let db = OpenDatabase();
-    let stmt = `SELECT * FROM Agent WHERE Codename LIKE "${req.body.codename}%";`;
+    let stmt = `SELECT * FROM Agent WHERE Codename LIKE "${req.query.codename}%";`;
     db.all(stmt, (err, rows) => {
         if (err) {
             console.error(err);
@@ -153,7 +153,7 @@ app.route("/api/agent/withCodename").get((req, res) => {
 
 app.route("/api/agent/team").get((req, res) => {
     let db = OpenDatabase();
-    let stmt = `SELECT * FROM Agent WHERE Codename LIKE "%${req.body.team}";`;
+    let stmt = `SELECT * FROM Agent WHERE Codename LIKE "%${req.query.team}";`;
     db.all(stmt, (err, rows) => {
         if (err) {
             console.error(err);
@@ -169,11 +169,11 @@ app.route("/api/agent/team").get((req, res) => {
 
 app.route("/api/agent/id").get((req, res) => {
     let db = OpenDatabase();
-    let stmt = `SELECT Realname FROM Agent WHERE id = "${req.body.id}";`;
+    let stmt = `SELECT Realname FROM Agent WHERE id = "${req.query.id}";`;
     db.all(stmt, (err, rows) => {
         if (err) {
             console.error(err);
-            res.send(`${req.body.name} is not an agent`);
+            res.send(`${req.query.name} is not an agent`);
             return;
         }
         res.send(rows[0]);
@@ -184,15 +184,16 @@ app.route("/api/agent/id").get((req, res) => {
 
 app.route("/api/agent/name").get((req, res) => {
     let db = OpenDatabase();
-    let stmt = `SELECT Codename FROM Agent WHERE Realname = "${req.body.name}";`;
+    console.log(req.query.name);
+    let stmt = `SELECT * FROM Agent WHERE Realname = "${req.query.name}";`;
     db.all(stmt, (err, rows) => {
         if (err) {
             console.error(err);
-            res.send(`${req.body.name} is not an agent`);
+            res.send(`${req.query.name} is not an agent`);
             return;
         }
         res.send(rows[0]);
-        console.log(rows[0]);
+        console.log(rows);
     })
     db.close();
 })
